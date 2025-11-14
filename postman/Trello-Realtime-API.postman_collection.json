@@ -1,0 +1,207 @@
+{
+  "info": {
+    "name": "Trello Realtime API",
+    "description": "API collection for Trello real-time synchronization application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Trello APIs",
+      "item": [
+        {
+          "name": "Get Boards",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/trello/boards",
+              "host": ["{{base_url}}"],
+              "path": ["api", "trello", "boards"]
+            },
+            "description": "Retrieves all boards accessible by the authenticated Trello user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Board Lists",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/trello/boards/:boardId/lists",
+              "host": ["{{base_url}}"],
+              "path": ["api", "trello", "boards", ":boardId", "lists"],
+              "variable": [
+                {
+                  "key": "boardId",
+                  "value": "",
+                  "description": "Trello Board ID"
+                }
+              ]
+            },
+            "description": "Retrieves all lists in a specific board"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Cards",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/trello/boards/:boardId/cards",
+              "host": ["{{base_url}}"],
+              "path": ["api", "trello", "boards", ":boardId", "cards"],
+              "variable": [
+                {
+                  "key": "boardId",
+                  "value": "",
+                  "description": "Trello Board ID"
+                }
+              ]
+            },
+            "description": "Retrieves all cards from a specific board"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Card",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"listId\": \"your_list_id\",\n  \"name\": \"New Card from Postman\",\n  \"description\": \"This card was created using the API\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/trello/cards",
+              "host": ["{{base_url}}"],
+              "path": ["api", "trello", "cards"]
+            },
+            "description": "Creates a new card in a specific list"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Card",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Card Name\",\n  \"desc\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/trello/cards/:cardId",
+              "host": ["{{base_url}}"],
+              "path": ["api", "trello", "cards", ":cardId"],
+              "variable": [
+                {
+                  "key": "cardId",
+                  "value": "",
+                  "description": "Trello Card ID"
+                }
+              ]
+            },
+            "description": "Updates an existing card"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Webhook APIs",
+      "item": [
+        {
+          "name": "Register Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"boardId\": \"your_board_id\",\n  \"description\": \"My Board Webhook\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/webhooks/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "webhooks", "register"]
+            },
+            "description": "Registers a webhook for real-time board updates"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Webhooks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/webhooks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "webhooks"]
+            },
+            "description": "Retrieves all registered webhooks"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Webhook",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/webhooks/:webhookId",
+              "host": ["{{base_url}}"],
+              "path": ["api", "webhooks", ":webhookId"],
+              "variable": [
+                {
+                  "key": "webhookId",
+                  "value": "",
+                  "description": "Webhook ID"
+                }
+              ]
+            },
+            "description": "Deletes a registered webhook"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/health",
+          "host": ["{{base_url}}"],
+          "path": ["api", "health"]
+        },
+        "description": "Health check endpoint to verify server status"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    }
+  ]
+}
