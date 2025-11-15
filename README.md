@@ -1,14 +1,24 @@
 # Trello Real-time WebSocket + API Frontend Assignment
 
-A full-stack application that demonstrates real-time synchronization between Trello boards and a web interface using WebSockets. The application allows users to view boards, create cards, and receive instant updates when changes occur in Trello.
+A production-ready full-stack application that integrates with Trello's API and provides real-time synchronization across multiple clients using WebSocket technology. Built with Node.js, Express, Socket.IO, React, and Vite.
 
-## Features
+## 🎯 Assignment Overview
 
-- **Real-time Synchronization**: WebSocket-based live updates across multiple browser windows
-- **Trello Integration**: Full integration with Trello API v1
-- **Webhook Support**: Automatic webhook registration and management
-- **Modern UI**: Clean, responsive interface built with React
-- **Production Ready**: Error handling, rate limiting, and security best practices
+This project demonstrates:
+- **4 Core REST APIs**: Get Boards, Get Cards, Create Card, Update Card
+- **Real-time Bidirectional Sync**: WebSocket-based instant updates across all connected clients
+- **Trello Webhook Integration**: Automatic notifications when Trello data changes
+- **Modern React Frontend**: Responsive UI with real-time updates and toast notifications
+- **Production-Level Architecture**: Clean code, error handling, security, and scalability
+
+## ✨ Features
+
+- **Real-time Synchronization**: WebSocket-based live updates across multiple browser windows without page refresh
+- **Trello API Integration**: Full integration with Trello REST API v1
+- **Webhook Support**: Automatic webhook registration and callback handling for Trello board events
+- **Modern UI**: Clean, responsive interface built with React 18 and Vite
+- **Production Ready**: Comprehensive error handling, rate limiting, CORS, and security headers
+- **Docker Support**: Complete containerization with Docker Compose for easy deployment
 
 ## Tech Stack
 
@@ -75,121 +85,53 @@ TrelloAssignment/
 └── README.md
 ```
 
-## Setup Instructions
+## 🚀 Quick Start
 
 ### Prerequisites
-
 - Node.js (v18 or higher)
 - npm or yarn
-- Trello account
-- ngrok or similar service for webhook callback URL
+- Trello account with API credentials
+- ngrok (for webhook testing in local development)
 
-### 1. Obtain Trello API Credentials
+### Installation
 
-1. Go to [https://trello.com/power-ups/admin](https://trello.com/power-ups/admin)
-2. Click "New" to create a new Power-Up
-3. Fill in the required details and create the Power-Up
-4. Copy your **API Key**
-5. Click on the "Token" link to generate a **Token** (you'll need to authorize access)
-6. Save both the API Key and Token
-
-### 2. Setup ngrok (for webhook callback)
-
-1. Download and install ngrok from [https://ngrok.com/](https://ngrok.com/)
-2. Start ngrok to expose your local backend:
+1. **Clone the repository**
    ```bash
-   ngrok http 5000
+   git clone https://github.com/bashSunny101/TrelloAssignment.git
+   cd TrelloAssignment
    ```
-3. Copy the HTTPS forwarding URL (e.g., `https://abcd1234.ngrok.io`)
 
-### 3. Backend Setup
+2. **Setup Backend**
+   ```bash
+   cd backend
+   npm install
+   cp .env.example .env
+   # Edit .env and add your Trello API credentials
+   npm run dev
+   ```
 
-```bash
-cd backend
-npm install
-```
+3. **Setup Frontend**
+   ```bash
+   cd frontend
+   npm install
+   cp .env.example .env
+   npm run dev
+   ```
 
-Create a `.env` file in the backend directory:
+4. **Access the Application**
+   - Frontend: http://localhost:3000
+   - Backend: http://localhost:5000
+   - API Health: http://localhost:5000/api/health
 
-```env
-PORT=5000
-NODE_ENV=development
+## 📋 API Documentation
 
-TRELLO_API_KEY=your_trello_api_key_here
-TRELLO_TOKEN=your_trello_token_here
+### Core APIs (Assignment Requirements)
 
-WEBHOOK_CALLBACK_URL=https://your-ngrok-url.ngrok.io/api/webhooks/callback
-
-FRONTEND_URL=http://localhost:3000
-```
-
-Start the backend server:
-
-```bash
-npm run dev
-```
-
-The backend will run on `http://localhost:5000`
-
-### 4. Frontend Setup
-
-```bash
-cd frontend
-npm install
-```
-
-Create a `.env` file in the frontend directory:
-
-```env
-VITE_API_URL=http://localhost:5000
-VITE_WS_URL=http://localhost:5000
-```
-
-Start the frontend development server:
-
-```bash
-npm run dev
-```
-
-The frontend will run on `http://localhost:3000`
-
-## Using the Application
-
-### 1. View Boards
-
-- Open the application in your browser
-- Your Trello boards will be displayed on the dashboard
-- Click on any board to view its cards
-
-### 2. Register Webhook
-
-- Click the "Manage Webhooks" button
-- Select a board from the dropdown
-- Click "Register" to enable real-time updates for that board
-
-### 3. Create Cards
-
-- Select a board to view its lists and cards
-- Click "+ Create Card"
-- Fill in the card details (list, name, description)
-- Submit to create the card
-
-### 4. Test Real-time Sync
-
-1. Open the application in two browser windows side by side
-2. Select the same board in both windows
-3. Create, update, or move a card in Trello
-4. Watch both windows update automatically in real-time
-
-## API Endpoints
-
-### Trello APIs
-
-#### 1. Get Boards
+#### 1. Get All Boards
 ```http
 GET /api/trello/boards
 ```
-Returns all boards accessible by the authenticated user.
+Fetches all boards accessible by the authenticated Trello user.
 
 **Response:**
 ```json
@@ -199,18 +141,17 @@ Returns all boards accessible by the authenticated user.
     {
       "id": "board_id",
       "name": "Board Name",
-      "desc": "Board description",
-      "prefs": {...}
+      "desc": "Board description"
     }
   ]
 }
 ```
 
-#### 2. Get Cards
+#### 2. Get Cards from Board
 ```http
 GET /api/trello/boards/:boardId/cards
 ```
-Returns all cards in a specific board.
+Fetches all cards from a specific board.
 
 **Response:**
 ```json
@@ -221,8 +162,7 @@ Returns all cards in a specific board.
       "id": "card_id",
       "name": "Card Name",
       "desc": "Card description",
-      "idList": "list_id",
-      "idShort": 1
+      "idList": "list_id"
     }
   ]
 }
@@ -247,8 +187,7 @@ Content-Type: application/json
   "data": {
     "id": "new_card_id",
     "name": "Card Name",
-    "desc": "Card description",
-    "idList": "list_id"
+    "desc": "Card description"
   }
 }
 ```
@@ -260,8 +199,7 @@ Content-Type: application/json
 
 {
   "name": "Updated Name",
-  "desc": "Updated description",
-  "idList": "new_list_id"
+  "desc": "Updated description"
 }
 ```
 
@@ -271,13 +209,17 @@ Content-Type: application/json
   "success": true,
   "data": {
     "id": "card_id",
-    "name": "Updated Name",
-    "desc": "Updated description"
+    "name": "Updated Name"
   }
 }
 ```
 
-### Webhook APIs
+### Additional APIs
+
+#### Get Board Lists
+```http
+GET /api/trello/boards/:boardId/lists
+```
 
 #### Register Webhook
 ```http
@@ -286,7 +228,7 @@ Content-Type: application/json
 
 {
   "boardId": "board_id",
-  "description": "My Board Webhook"
+  "description": "Webhook description"
 }
 ```
 
@@ -300,143 +242,291 @@ GET /api/webhooks
 DELETE /api/webhooks/:webhookId
 ```
 
-## WebSocket Events
+## 🔌 WebSocket Events
 
-### Client → Server
-- `join-board`: Join a board room for real-time updates
+### Client Events
+- `join-board`: Join a board room to receive real-time updates
 - `leave-board`: Leave a board room
 
-### Server → Client
+### Server Events
 - `card:created`: Emitted when a new card is created
 - `card:updated`: Emitted when a card is updated
 - `card:deleted`: Emitted when a card is deleted
 - `card:moved`: Emitted when a card is moved to another list
 
-## Postman Collection
+## 📦 Postman Collection
 
-Import the Postman collection from `postman/Trello-Realtime-API.postman_collection.json` to test all API endpoints.
+A complete Postman collection is included for testing all API endpoints.
+
+**Location:** `postman/Trello-Realtime-API.postman_collection.json`
 
 ### Using the Collection
 
 1. Open Postman
-2. Click Import → Upload Files
-3. Select the collection JSON file
-4. Update the environment variables:
-   - `base_url`: Your backend URL (default: `http://localhost:5000`)
-   - `trello_api_key`: Your Trello API key
-   - `trello_token`: Your Trello token
+2. Click **Import** → **Upload Files**
+3. Select `postman/Trello-Realtime-API.postman_collection.json`
+4. The collection includes all endpoints pre-configured
+5. Update base URL to `http://localhost:5000` if needed
 
-## Deployment
+### Included Requests
 
-### Backend Deployment (Heroku Example)
+- ✅ Health Check
+- ✅ Get All Boards
+- ✅ Get Board Lists
+- ✅ Get Cards from Board
+- ✅ Create Card
+- ✅ Update Card
+- ✅ Register Webhook
+- ✅ Get All Webhooks
+- ✅ Delete Webhook
 
+## 🎥 Demo Video
+
+A comprehensive demo video showcasing:
+- All 4 required REST APIs working in Postman
+- Real-time WebSocket synchronization across multiple browser windows
+- Trello webhook integration with live updates
+- Code architecture walkthrough
+
+**Duration:** 3-5 minutes  
+**Recording Date:** November 15, 2025
+
+## 🧪 Testing
+
+### Manual Testing
+
+Start both servers and test the APIs:
+
+```bash
+# Terminal 1 - Backend
+cd backend && npm run dev
+
+# Terminal 2 - Frontend  
+cd frontend && npm run dev
+
+# Terminal 3 - API Tests
+curl http://localhost:5000/api/health
+curl http://localhost:5000/api/trello/boards
+```
+
+### Real-time Sync Testing
+
+1. Open http://localhost:3000 in two browser windows
+2. Select the same board in both windows
+3. Create a card in one window
+4. Verify it appears instantly in the other window
+
+### Webhook Testing
+
+1. Start ngrok: `ngrok http 5000`
+2. Update `backend/.env` with ngrok URL
+3. Restart backend server
+4. Register webhook via Postman or frontend
+5. Create/update cards in Trello.com
+6. Verify app windows update automatically
+
+## 🛠️ Tech Stack
+
+### Backend
+- **Runtime:** Node.js v18+
+- **Framework:** Express 4.18.2
+- **WebSocket:** Socket.IO 4.7.2
+- **HTTP Client:** Axios 1.6.2
+- **Security:** Helmet, CORS, express-rate-limit
+- **Development:** Nodemon 3.1.11
+
+### Frontend
+- **Framework:** React 18.2.0
+- **Build Tool:** Vite 5.0.8
+- **WebSocket Client:** Socket.IO Client 4.7.2
+- **Notifications:** React Toastify 9.1.3
+- **Icons:** Lucide React 0.294.0
+- **Styling:** Custom CSS with responsive design
+
+### DevOps
+- **Containerization:** Docker, Docker Compose
+- **Process Manager:** PM2 (for production)
+- **Tunneling:** ngrok (for local webhook testing)
+- **Version Control:** Git, GitHub
+
+## 📁 Project Structure
+
+## 🔐 Environment Configuration
+
+### Backend (.env)
+
+```env
+PORT=5000
+NODE_ENV=development
+
+TRELLO_API_KEY=your_trello_api_key
+TRELLO_TOKEN=your_trello_token
+
+WEBHOOK_CALLBACK_URL=https://your-ngrok-url.ngrok-free.dev/api/webhooks/callback
+
+FRONTEND_URL=http://localhost:3000
+```
+
+### Frontend (.env)
+
+```env
+VITE_API_URL=http://localhost:5000
+VITE_WS_URL=http://localhost:5000
+```
+
+### Getting Trello Credentials
+
+1. **Get API Key:**
+   - Go to https://trello.com/power-ups/admin
+   - Create a new Power-Up
+   - Copy the API Key shown
+
+2. **Get Token:**
+   - On the same page, click "Token" link
+   - Click "Allow" to authorize
+   - Copy the 64-character token
+
+3. **Setup ngrok (for webhooks):**
+   ```bash
+   # Download from https://ngrok.com
+   ngrok http 5000
+   # Copy the HTTPS URL and update backend/.env
+   ```
+
+## 🚀 Deployment
+
+### Using Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+### Manual Deployment
+
+**Backend (Heroku example):**
 ```bash
 cd backend
 heroku create your-app-name
 heroku config:set TRELLO_API_KEY=your_key
 heroku config:set TRELLO_TOKEN=your_token
 heroku config:set WEBHOOK_CALLBACK_URL=https://your-app.herokuapp.com/api/webhooks/callback
-heroku config:set FRONTEND_URL=https://your-frontend-url.com
 git push heroku main
 ```
 
-### Frontend Deployment (Vercel/Netlify)
-
-Update `.env` with production URLs:
-```env
-VITE_API_URL=https://your-backend-url.com
-VITE_WS_URL=https://your-backend-url.com
-```
-
-Build and deploy:
+**Frontend (Vercel/Netlify):**
 ```bash
+cd frontend
 npm run build
+# Deploy dist/ folder to Vercel or Netlify
 ```
 
-## Demo Video Guidelines
+## ⚡ Performance & Security
 
-Record a 3-5 minute video showing:
+### Implemented Features
 
-1. **Setup Overview** (30 seconds)
-   - Show the project structure
-   - Explain the tech stack
+- ✅ **Rate Limiting:** 100 requests per 15 minutes on API endpoints
+- ✅ **CORS Protection:** Configured for frontend origin
+- ✅ **Security Headers:** Helmet.js for HTTP security
+- ✅ **Input Validation:** Request body validation
+- ✅ **Error Handling:** Centralized error handling middleware
+- ✅ **Environment Variables:** Sensitive data protection
+- ✅ **WebSocket Rooms:** Isolated board-specific communication
+- ✅ **Connection Pooling:** Efficient WebSocket connection management
 
-2. **API Testing** (1 minute)
-   - Use Postman to test the 4 main APIs
-   - Show successful responses
+## 🐛 Troubleshooting
 
-3. **Real-time Sync Demo** (2-3 minutes)
-   - Open two browser windows side by side
-   - Register a webhook for a board
-   - Create a card in one window, show it appearing in the other
-   - Update a card in Trello, show both windows updating
-   - Move a card between lists, show real-time synchronization
+### Backend won't start
+```bash
+# Check if port 5000 is in use
+lsof -i :5000
+# Kill the process if needed
+kill -9 <PID>
+```
 
-4. **Code Walkthrough** (1 minute)
-   - Briefly explain key components
-   - Show WebSocket integration
-   - Explain webhook callback handling
+### Frontend can't connect to backend
+- Verify backend is running on port 5000
+- Check CORS settings in `backend/src/server.js`
+- Ensure `VITE_API_URL` in frontend/.env is correct
 
-## Troubleshooting
+### Webhooks not working
+- Ensure ngrok is running and URL is updated in backend/.env
+- Verify webhook is registered (check `/api/webhooks`)
+- Check backend logs for webhook callback errors
+- Ensure callback URL is publicly accessible
 
-### Webhooks Not Working
+### Cards not syncing in real-time
+- Check WebSocket connection in browser console (F12)
+- Verify you've selected a board (joined the room)
+- Check that both windows are on the same board
+- Restart backend server to reset WebSocket connections
 
-1. Ensure ngrok is running and the URL is up-to-date in `.env`
-2. Check that the webhook is registered for the correct board
-3. Verify the webhook callback URL is publicly accessible
-4. Check backend logs for webhook callback errors
+## 📊 Demo Scenarios
 
-### Cards Not Updating in Real-time
+### Scenario 1: API Testing
+1. Import Postman collection
+2. Test GET Boards → Success
+3. Test GET Cards → Success
+4. Test POST Create Card → New card created
+5. Test PUT Update Card → Card updated
 
-1. Check WebSocket connection in browser console
-2. Ensure you've joined the board room (select a board)
-3. Verify the webhook is active for that board
-4. Check for CORS errors in browser console
+### Scenario 2: Real-time Sync
+1. Open app in 2 windows
+2. Select same board in both
+3. Create card in Window 1
+4. Card appears in Window 2 instantly ✅
 
-### API Errors
+### Scenario 3: Trello Integration
+1. Register webhook for a board
+2. Go to Trello.com
+3. Create/move/update a card
+4. App windows update automatically ✅
 
-1. Verify Trello API credentials are correct
-2. Check that the token has not expired
-3. Ensure rate limits are not exceeded
-4. Check backend logs for detailed error messages
+## 📝 Assignment Requirements
 
-## Security Best Practices Implemented
+### ✅ Completed Requirements
 
-- Environment variables for sensitive data
-- Helmet.js for HTTP security headers
-- CORS configuration
-- Rate limiting on API endpoints
-- Input validation
-- Error handling without exposing internal details
+- [x] **4 REST APIs implemented and working**
+  - GET Boards
+  - GET Cards  
+  - POST Create Card
+  - PUT Update Card
 
-## Performance Optimizations
+- [x] **Frontend with real-time synchronization**
+  - React application with modern UI
+  - WebSocket integration
+  - Multiple window sync
 
-- Connection pooling for WebSocket connections
-- Efficient state management in React
-- Debounced API calls
-- Optimized re-renders with React hooks
-- Build optimization with Vite
+- [x] **Webhook integration**
+  - Registration endpoint
+  - Callback handler
+  - Real-time Trello updates
 
-## License
+- [x] **Documentation**
+  - Complete README with setup instructions
+  - API documentation
+  - Postman collection
 
-MIT
+- [x] **Production-level code**
+  - Clean architecture (MVC pattern)
+  - Error handling
+  - Security best practices
+  - No inline comments (self-documenting code)
 
-## Author
+## 📞 Contact & Support
 
-Created for Inscripts Frontend Internship Assignment
+**GitHub Repository:** https://github.com/bashSunny101/TrelloAssignment
 
-## Submission Checklist
-
-- ✅ GitHub repository with frontend and backend in separate folders
-- ✅ Detailed README with setup instructions
-- ✅ Four required APIs implemented (get boards, get cards, create card, update card)
-- ✅ Webhook registration and real-time synchronization
-- ✅ Postman collection included
-- ✅ Production-level code without comments
-- ✅ Environment configuration templates
-- ✅ Instructions for obtaining Trello API credentials
-- ✅ Instructions for webhook setup with ngrok
-
-## Contact
+**Assignment:** Trello Real-time WebSocket + API Frontend  
+**Company:** Inscripts  
+**Platform:** Internshala  
+**Submission Date:** November 2025
 
 For questions or issues, please open an issue in the GitHub repository.
+
+## 📄 License
+
+MIT License - Feel free to use this project for learning and development purposes.
+
+---
+
+**Built with ❤️ for Inscripts Frontend Internship Assignment**
